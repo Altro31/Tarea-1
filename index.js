@@ -2,8 +2,8 @@
 
 /**
  * name: 
- * ingredients: An array (of strings) that represents all of recipe's ingredients
- * prepSteps: An array (of strings) that represents all of needed steps to the recipe
+ * ingredients: An array (of strings) that represents all recipe's ingredients
+ * prepSteps: An array (of strings) that represents all needed steps to make the recipe
  */
 class Recipe {
   constructor(name, ingredients = [], prepSteps = []) {
