@@ -1,89 +1,122 @@
 // 27. Gestor de Recetas de Cocina
 
-/**
- * name: 
- * ingredients: An array (of strings) that represents all recipe's ingredients
- * prepSteps: An array (of strings) that represents all needed steps to make the recipe
- */
+
 class Recipe {
+  
+  /**
+   * @param {string} name Recipe's name
+   * @param {string[]?} ingredients An array that represents all of recipe's ingredients
+   * @param {string[]?} prepSteps An array that represents all of needed steps to the recipe
+   */
   constructor(name, ingredients = [], prepSteps = []) {
-    //Recipe's name
-    let _name = name;
-    //An array (of strings) that represents all of recipe's ingredients
-    let _ingredients = ingredients;
-    //An array (of strings) that represents all of needed steps to the recipe
-    let _prepSteps = prepSteps;
+    
+    let _name = name
+    let _ingredients = ingredients
+    let _prepSteps = prepSteps
 
-    //Getter and Setters
-    this.getName = () => _name;
+    this.getName = () => _name
     this.setName = function (name) {
-      if (name) _name = name;
-    };
+      if (name) _name = name
+    }
 
-    this.getIngredients = () => _ingredients;
+    this.getIngredients = () => _ingredients
 
-    this.getPrepSteps = () => _prepSteps;
+    this.getPrepSteps = () => _prepSteps
   }
 }
 
-/**
- * This class represents a Recipe Manager that has a list o recettes and can add, remove o modify
- */
+
 class RecipeManager {
+  
+  /**
+   * @param {Recipe[]?} recipes An array of Recipes
+   */
   constructor(recipes = []) {
-    //An array of Recipes
-    let _recipes = recipes;
 
-    //Add a recipe to the list
-    this.addRecipe = (recipe) => {
-      if (recipe) _recipes.push(recipe);
-    };
+    const _recipes = recipes
 
-    //Remove a recipe for the list. If there are 2 or more with the same name, they are removed as well.
-    this.removeRecipe = function (recipeName) {
-      _recipes = _recipes.filter((recipe) => recipe.getName() !== recipeName);
-    };
-
-    /**Edit a recipe
-     * recipeTarget: Recipe to be edited
-     * propsToEdit: An object with the props to edit
-     *
-     * e.g: propsToEdit = {name: Super Pizza, ingredients: ['A', 'B'], prepSteps: ['C', 'D']}
+    /**
+     * Return a new array that represents this instance's recipe list
+     * 
+     * @returns A copy of this instance's recipe list
      */
-    this.editRecipe = (recipeTargetName, propsToEdit) => {
-      const recipe = _recipes.find(
-        (recipe) => recipe.getName() === recipeTargetName
-      );
-      //If name is evaluated as false...
-      if (propsToEdit.name) {
-        recipe.setName(propsToEdit.name);
-      }
-      //If ingredients is evaluated as false...
-      if (propsToEdit.ingredients) {
-        recipe.getIngredients().length = 0;
-        //I explain this for-of in README.md
-        for (const ingredient of propsToEdit.ingredients) {
-          recipe.getIngredients().push(ingredient);
-        }
-      }
-      //If prepSteps is evaluated as false...
-      if (propsToEdit.prepSteps) {
-        recipe.getPrepSteps().length = 0;
-        for (const step of propsToEdit.prepSteps) {
-          recipe.getPrepSteps().push(step);
-        }
-      }
-    };
+    this.getRecipeList = () => _recipes.slice()
 
-    //Giving an array of string (ingredientes), return an array with all recipes that have those ingredients (all of them)
-    this.getRecipesByIngredients = function (ingredients) {
-      return _recipes.filter((recipe) => {
-        let check = true;
-        for (let i = 0; i < ingredients.length && check; i++) {
-          check = recipe.getIngredients().includes(ingredients[i]);
+    /**
+     * Add a new recipe to the list
+     * 
+     * @param {string} recipeName 
+     * @param {string[]} recipeIngredients 
+     * @param {string[]} recipePrepSteps 
+     */
+    this.addRecipe = (recipeName, recipeIngredients, recipePrepSteps) => _recipes.push(new Recipe(recipeName, recipeIngredients, recipePrepSteps))
+
+    /**
+     * Remove all recipes whose names are recipeName
+     * 
+     * @param {string} recipeName
+     */
+    this.removeRecipe = (recipeName) => _recipes.filter((recipe) => recipe.getName() !== recipeName)
+
+    /**
+     * Edit a recipe
+     * @param {string} recipeName 
+     * @param {{name: string, ingredients: string[], prepSteps: string[]}} propsToEdit
+     * @example propsToEdit = {name: Super Pizza, ingredients: ['A', 'B'], prepSteps: ['C', 'D']}
+     */
+    this.editRecipe = (recipeName, propsToEdit) => {
+      const recipe = _recipes.find((recipe) => recipe.getName() === recipeName)
+
+      recipe.setName(propsToEdit.name)
+
+      //If ingredients is evaluated as true...
+      if (propsToEdit.ingredients) {
+        recipe.getIngredients().length = 0
+        //I explain for-of in README.md
+        for (const ingredient of propsToEdit.ingredients) {
+          recipe.getIngredients().push(ingredient)
         }
-        return check;
-      });
-    };
+      }
+
+      //If prepSteps is evaluated as true...
+      if (propsToEdit.prepSteps) {
+        recipe.getPrepSteps().length = 0
+        for (const step of propsToEdit.prepSteps) {
+          recipe.getPrepSteps().push(step)
+        }
+      }
+    }
+  }
+
+  /**
+   * Giving an array of string (ingredientes), return an array with all recipes that have those ingredients (all of them)
+   * 
+   * @param {string[]} ingredients An array of string
+   * @returns A list of Recipes whose ingredientsList contains "ingredients"
+   */
+  getRecipesByIngredients(ingredients) {
+    return this.getRecipeList().filter((recipe) => ingredients.every((ingredient) => recipe.getIngredients().includes(ingredient)))
   }
 }
+
+
+//-----------Pruebas-----------------------------------------------------------------------------------
+const recipe1 = new Recipe(
+  "Arroz con Leche",
+  ["Arroz", "Leche"],
+  ["Cocinar", "Emplatar", "Servir"]
+)
+const recipe2 = new Recipe(
+  "Jugo de Guayaba",
+  ["Guayaba", "Azucar", "Sal"],
+  ["Pelar Guayaba", "Juntar ingredientes", "Batir"]
+)
+const manager = new RecipeManager([recipe1])
+manager.addRecipe(recipe2)
+const recipe = manager.getRecipesByIngredients(["Arroz"])[0]
+manager.editRecipe(recipe.getName(),{
+  name: "Flan",
+  ingredients: ["Leche","Azucar","Huevo"],
+  prepSteps: ["Cocinar", "Enfriar", "Servir"],
+})
+const list = manager.getRecipeList()
