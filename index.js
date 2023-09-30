@@ -2,14 +2,14 @@
 
 
 class Recipe {
-  
+
   /**
    * @param {string} name Recipe's name
    * @param {string[]?} ingredients An array that represents all of recipe's ingredients
    * @param {string[]?} prepSteps An array that represents all of needed steps to the recipe
    */
   constructor(name, ingredients = [], prepSteps = []) {
-    
+
     let _name = name
     let _ingredients = ingredients
     let _prepSteps = prepSteps
@@ -27,7 +27,7 @@ class Recipe {
 
 
 class RecipeManager {
-  
+
   /**
    * @param {Recipe[]?} recipes An array of Recipes
    */
@@ -100,23 +100,95 @@ class RecipeManager {
 }
 
 
-//-----------Pruebas-----------------------------------------------------------------------------------
+//-----------Prueba-----------------------------------------------------------------------------------
+/**/console.log('\nCrando receta #1')/**/
+
 const recipe1 = new Recipe(
   "Arroz con Leche",
   ["Arroz", "Leche"],
   ["Cocinar", "Emplatar", "Servir"]
 )
+
+/**/console.log(`
+name: ${recipe1.getName()}
+ingredients: ${recipe1.getIngredients()}
+prepSteps: ${recipe1.getPrepSteps()}
+`)/**/
+
+
+/**/console.log('Creando receta #2')/**/
+
 const recipe2 = new Recipe(
   "Jugo de Guayaba",
   ["Guayaba", "Azucar", "Sal"],
   ["Pelar Guayaba", "Juntar ingredientes", "Batir"]
 )
+
+/**/console.log(`
+name: ${recipe2.getName()}
+ingredients: ${recipe2.getIngredients()}
+prepSteps: ${recipe2.getPrepSteps()}
+`)/**/
+
+
+/**/console.log('Creando el Gestor de recetas incluyendo la receta #1')/**/
+
 const manager = new RecipeManager([recipe1])
-manager.addRecipe(recipe2)
-const recipe = manager.getRecipesByIngredients(["Arroz"])[0]
-manager.editRecipe(recipe.getName(),{
+
+/**/for (const [index, recipe] of manager.getRecipeList().entries()) {
+  console.log(`
+  Receta #${index + 1}
+  name: ${recipe.getName()}
+  ingredients: ${recipe.getIngredients()}
+  prepSteps: ${recipe.getPrepSteps()}
+  `)
+}/**/
+
+
+/**/console.log('Añadiendo la receta #2 al gestor de recetas')/**/
+
+manager.addRecipe(recipe2.getName(), recipe2.getIngredients(), recipe2.getPrepSteps())
+
+/**/for (const [index, recipe] of manager.getRecipeList().entries()) {
+  console.log(`
+  Receta #${index + 1}
+  name: ${recipe.getName()}
+  ingredients: ${recipe.getIngredients()}
+  prepSteps: ${recipe.getPrepSteps()}
+  `)
+}/**/
+
+
+const ingredients = ["Arroz"]
+/**/console.log(`Lista de recetas que tienen (${ingredients}) en sus ingredientes`)
+
+const recipeList = manager.getRecipesByIngredients(ingredients)
+
+/**/for (const recipe of recipeList) {
+  console.log(`
+  Receta #${manager.getRecipeList().indexOf(recipe)+1}
+  name: ${recipe.getName()}
+  ingredients: ${recipe.getIngredients()}
+  prepSteps: ${recipe.getPrepSteps()}
+  `)
+}/**/
+
+const index = 0
+/**/console.log(`Editando la receta #${index+1} de la lista de recetas del paso anterior`)/**/
+manager.editRecipe(recipeList[index].getName(), {
   name: "Flan",
-  ingredients: ["Leche","Azucar","Huevo"],
+  ingredients: ["Leche", "Azucar", "Huevo"],
   prepSteps: ["Cocinar", "Enfriar", "Servir"],
 })
 const list = manager.getRecipeList()
+
+
+/**/console.log(`Nueva lista de recetas`)/**/
+/**/for (const [index,recipe] of list.entries()) {
+  console.log(`
+  Receta #${index+1}
+  name: ${recipe.getName()}
+  ingredients: ${recipe.getIngredients()}
+  prepSteps: ${recipe.getPrepSteps()}
+  `)
+}/**/
